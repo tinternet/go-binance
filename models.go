@@ -1,5 +1,7 @@
 package binance
 
+import "time"
+
 // RateLimit struct
 type RateLimit struct {
 	RateLimitType string `json:"rateLimitType"`
@@ -76,6 +78,59 @@ type AggregatedTrade struct {
 	IsBestPriceMatch bool    `json:"M"`
 }
 
+// Kline struct
+type Kline struct {
+	OpenTime              time.Time
+	Open                  float64
+	High                  float64
+	Low                   float64
+	Close                 float64
+	Volume                float64
+	CloseTime             time.Time
+	QuoteAssetVolume      float64
+	TradesCount           int
+	TakerBuyBaseAssetVol  float64
+	TakerBuyQuoteAssetVol float64
+}
+
+// Ticker represents 24 hour price change statistics
+type Ticker struct {
+	Symbol             string  `json:"symbol"`
+	PriceChange        float64 `json:"priceChange,string"`
+	PriceChangePercent float64 `json:"priceChangePercent,string"`
+	WeightedAvgPrice   float64 `json:"weightedAvgPrice,string"`
+	PrevClosePrice     float64 `json:"prevClosePrice,string"`
+	LastPrice          float64 `json:"lastPrice,string"`
+	LastQty            float64 `json:"lastQty,string"`
+	BidPrice           float64 `json:"bidPrice,string"`
+	AskPrice           float64 `json:"askPrice,string"`
+	OpenPrice          float64 `json:"openPrice,string"`
+	HighPrice          float64 `json:"highPrice,string"`
+	LowPrice           float64 `json:"lowPrice,string"`
+	Volume             float64 `json:"volume,string"`
+	QuoteVolume        float64 `json:"quoteVolume,string"`
+	OpenTime           int64   `json:"openTime"`
+	CloseTime          int64   `json:"closeTime"`
+	FirstTradeID       int     `json:"firstId"`
+	LastTradeID        int     `json:"lastId"`
+	TradeCount         int     `json:"count"`
+}
+
+// Price struct
+type Price struct {
+	Symbol string  `json:"symbol"`
+	Price  float64 `json:"price,string"`
+}
+
+// OrderBookTicker represents best price/qty for a symbol
+type OrderBookTicker struct {
+	Symbol   string  `json:"symbol"`
+	BidPrice float64 `json:"bidPrice,string"`
+	BidQty   float64 `json:"bidQty,string"`
+	AskPrice float64 `json:"askPrice,string"`
+	AskQty   float64 `json:"askQty,string"`
+}
+
 // TODO
 
 // TradeEvent represents trade change event
@@ -144,29 +199,6 @@ type TickerEvent struct {
 	FirstTradeID             uint64 `json:"F"`
 	LastTradeID              uint64 `json:"L"`
 	TotalTrades              int    `json:"n"`
-}
-
-// Ticker struct
-type Ticker struct {
-	Symbol             string  `json:"symbol"`
-	PriceChange        float64 `json:"priceChange,string"`
-	PriceChangePercent float64 `json:"priceChangePercent,string"`
-	WeightedAvgPrice   float64 `json:"weightedAvgPrice,string"`
-	PrevClosePrice     float64 `json:"prevClosePrice,string"`
-	LastPrice          float64 `json:"lastPrice,string"`
-	LastQty            float64 `json:"lastQty,string"`
-	BidPrice           float64 `json:"bidPrice,string"`
-	AskPrice           float64 `json:"askPrice,string"`
-	OpenPrice          float64 `json:"openPrice,string"`
-	HighPrice          float64 `json:"highPrice,string"`
-	LowPrice           float64 `json:"lowPrice,string"`
-	Volume             float64 `json:"volume,string"`
-	QuoteVolume        float64 `json:"quoteVolume,string"`
-	OpenTime           int64   `json:"openTime"`
-	CloseTime          int64   `json:"closeTime"`
-	FirstTradeID       int     `json:"firstId"`
-	LastTradeID        int     `json:"lastId"`
-	TradeCount         int     `json:"count"`
 }
 
 // PartialBook represents top <levels> bids and asks, pushed every second. Valid <levels> are 5, 10, or 20.

@@ -26,7 +26,9 @@ type params map[string]string
 func encodeQuery(u *url.URL, p params) {
 	q := u.Query()
 	for k, v := range p {
-		q.Add(k, v)
+		if v != "" {
+			q.Add(k, v)
+		}
 	}
 	u.RawQuery = q.Encode()
 }
@@ -62,8 +64,5 @@ func fetch(url string, p params, reply interface{}) error {
 	if err := detectError(res); err != nil {
 		return err
 	}
-	if err := json.NewDecoder(res.Body).Decode(&reply); err != nil {
-		return err
-	}
-	return nil
+	return json.NewDecoder(res.Body).Decode(&reply)
 }

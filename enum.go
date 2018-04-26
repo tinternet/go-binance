@@ -1,6 +1,6 @@
 package binance
 
-// SymbolStatus string
+// SymbolStatus represents symbol trading status
 type SymbolStatus string
 
 // Symbol trading statuses
@@ -77,4 +77,23 @@ const (
 	ThreeDayInterval   = ChartInterval("3d")
 	OneWeekInterval    = ChartInterval("1w")
 	OneMonthInterval   = ChartInterval("1M")
+)
+
+// RateLimiterType string
+type RateLimiterType string
+
+// Rate limiter types
+const (
+	RequestsRLType = RateLimiterType("REQUESTS")
+	OrdersRLType   = RateLimiterType("ORDERS")
+)
+
+// RateLimitInterval string``
+type RateLimitInterval string
+
+// Rate limit intervals
+const (
+	SecondRLInterval = RateLimitInterval("SECOND")
+	MinuteRLInterval = RateLimitInterval("MINUTE")
+	DayRLInterval    = RateLimitInterval("DAY")
 )

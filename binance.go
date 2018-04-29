@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
-// Ping tests connection to the Binance server
+// Ping tests connection to the Rest API
 func Ping() error {
 	return fetch(addrPing, nil, nil)
 }
@@ -34,52 +35,12 @@ func GetExchangeInfo() (info *ExchangeInfo, err error) {
 // [Limit 500] = [Weight 5];
 // [Limit 1000] = [Weight 10]
 func GetOrderBook(symbol, limit string) (*OrderBook, error) {
-	var reply struct {
-		LastUpdateID uint64          `json:"lastUpdateId"`
-		Bids         [][]interface{} `json:"bids"`
-		Asks         [][]interface{} `json:"asks"`
-	}
-
+	r := new(rawOrderBook)
 	p := params{"symbol": symbol, "limit": limit}
-
-	if err := fetch(addrOrderBook, p, &reply); err != nil {
+	if err := fetch(addrOrderBook, p, r); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(reply)
-
-	parseOrder := func(v [][]interface{}) ([]Order, error) {
-		orders := make([]Order, len(v))
-		for i, bid := range v {
-			var err error
-			var order Order
-			if order.Price, err = strconv.ParseFloat(bid[0].(string), 64); err != nil {
-				return nil, err
-			}
-			if order.Quantity, err = strconv.ParseFloat(bid[1].(string), 64); err != nil {
-				return nil, err
-			}
-			orders[i] = order
-		}
-		return orders, nil
-	}
-
-	var bids []Order
-	var asks []Order
-	var err error
-
-	if bids, err = parseOrder(reply.Bids); err != nil {
-		return nil, err
-	}
-	if asks, err = parseOrder(reply.Asks); err != nil {
-		return nil, err
-	}
-
-	book := new(OrderBook)
-	book.LastUpdateID = reply.LastUpdateID
-	book.Bids = bids
-	book.Asks = asks
-	return book, nil
+	return parseOrderBook(r)
 }
 
 // GetRecentTrades gets up to 500 trades
@@ -96,10 +57,10 @@ func GetOldTrades(symbol, limit, fromID string) (list []Trade, err error) {
 	return
 }
 
-// GetAggregatedTrades get compressed, aggregate trades.
+// GetAggregateTrades get compressed, aggregate trades.
 // Trades that fill at the time, from the same order,
 // with the same price will have the quantity aggregated.
-func GetAggregatedTrades(symbol, limit, fromID, startTime, endTime string) (list []AggregatedTrade, err error) {
+func GetAggregateTrades(symbol, limit, fromID, startTime, endTime string) (list []AggregateTrade, err error) {
 	p := params{"symbol": symbol, "limit": limit, "fromId": fromID, "startTime": startTime, "endTime": endTime}
 	err = fetch(addrOldTradeLookup, p, &list)
 	return
@@ -210,4 +171,67 @@ func GetOrderBookTicker(symbol string) (t *OrderBookTicker, err error) {
 func GetOrderBookTickers() (list []OrderBookTicker, err error) {
 	err = fetch(addrBookTicker, nil, &list)
 	return
+}
+
+// OpenAggregateTradeStream opens websocket with trade information that is aggregated for a single taker order.
+func OpenAggregateTradeStream(symbol string) (*AggregateTradeStream, error) {
+	ws, err := connectWebsocket(strings.ToLower(symbol) + "@aggTrade")
+	if err != nil {
+		return nil, err
+	}
+	return &AggregateTradeStream{stream{ws}}, nil
+}
+
+// OpenTradeStream opens websocket with raw trade information; each trade has a unique buyer and seller.
+func OpenTradeStream(symbol string) (*TradeStream, error) {
+	ws, err := connectWebsocket(strings.ToLower(symbol) + "@trade")
+	if err != nil {
+		return nil, err
+	}
+	return &TradeStream{stream{ws}}, nil
+}
+
+// OpenChartStream pushes trade information that is aggregated for a single taker order.
+func OpenChartStream(symbol string, interval ChartInterval) (*ChartStream, error) {
+	ws, err := connectWebsocket(fmt.Sprintf("%s@kline_%s", strings.ToLower(symbol), interval))
+	if err != nil {
+		return nil, err
+	}
+	return &ChartStream{stream{ws}}, nil
+}
+
+// OpenTickerStream pushes trade information that is aggregated for a single taker order.
+func OpenTickerStream(symbol string) (*TickerStream, error) {
+	ws, err := connectWebsocket(strings.ToLower(symbol) + "@ticker")
+	if err != nil {
+		return nil, err
+	}
+	return &TickerStream{stream{ws}}, nil
+}
+
+// OpenTickersStream pushes trade information that is aggregated for a single taker order.
+func OpenTickersStream() (*TickersStream, error) {
+	ws, err := connectWebsocket("!ticker@arr")
+	if err != nil {
+		return nil, err
+	}
+	return &TickersStream{stream{ws}}, nil
+}
+
+// OpenPartialBookStream pushes trade information that is aggregated for a single taker order.
+func OpenPartialBookStream(symbol, level string) (*PartialBookStream, error) {
+	ws, err := connectWebsocket(fmt.Sprintf("%s@depth%s", strings.ToLower(symbol), level))
+	if err != nil {
+		return nil, err
+	}
+	return &PartialBookStream{stream{ws}}, nil
+}
+
+// OpenDiffDepthStream pushes trade information that is aggregated for a single taker order.
+func OpenDiffDepthStream(symbol string) (*DiffDepthStream, error) {
+	ws, err := connectWebsocket(strings.ToLower(symbol) + "@depth")
+	if err != nil {
+		return nil, err
+	}
+	return &DiffDepthStream{stream{ws}}, nil
 }

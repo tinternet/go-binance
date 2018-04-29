@@ -66,8 +66,22 @@ type Trade struct {
 	IsBestMatch  bool   `json:"isBestMatch"`
 }
 
-// AggregatedTrade struct
-type AggregatedTrade struct {
+// TradeEvent struct
+type TradeEvent struct {
+	EventType     string  `json:"e"`
+	EventTime     uint64  `json:"E"`
+	Symbol        string  `json:"s"`
+	TradeID       uint64  `json:"t"`
+	Price         float64 `json:"p,string"`
+	Quantity      float64 `json:"q,string"`
+	BuyerOrderID  uint64  `json:"b"`
+	SellerOrderID uint64  `json:"a"`
+	TradeTime     int64   `json:"T"`
+	IsBuyerMaker  bool    `json:"m"`
+}
+
+// AggregateTrade struct
+type AggregateTrade struct {
 	ID               uint64  `json:"a"`
 	Price            float64 `json:"p"`
 	Quantity         float64 `json:"q"`
@@ -76,6 +90,21 @@ type AggregatedTrade struct {
 	Timestamp        uint64  `json:"T"`
 	IsBuyerMaker     bool    `json:"m"`
 	IsBestPriceMatch bool    `json:"M"`
+}
+
+// AggregateTradeEvent struct
+type AggregateTradeEvent struct {
+	EventType     string      `json:"e"`
+	EventTime     uint64      `json:"E"`
+	Symbol        string      `json:"s"`
+	TradeID       uint64      `json:"t"`
+	Price         float64     `json:"p,string"`
+	Quantity      float64     `json:"q,string"`
+	BuyerOrderID  uint64      `json:"b"`
+	SellerOrderID uint64      `json:"a"`
+	TradeTime     uint64      `json:"T"`
+	IsMarketMaker bool        `json:"m"`
+	Ignore        interface{} `json:"M"`
 }
 
 // Kline struct
@@ -91,6 +120,31 @@ type Kline struct {
 	TradesCount           int
 	TakerBuyBaseAssetVol  float64
 	TakerBuyQuoteAssetVol float64
+}
+
+// ChartEvent represents updates to the current klines/candlestick
+type ChartEvent struct {
+	EventType string `json:"e"`
+	EventTime uint64 `json:"E"`
+	Symbol    string `json:"s"`
+	Kline     struct {
+		KlineStart               uint64 `json:"t"`
+		KlineClose               uint64 `json:"T"`
+		Symbol                   string `json:"s"`
+		Interval                 string `json:"i"`
+		FirstTradeID             uint64 `json:"f"`
+		LastTradeID              uint64 `json:"L"`
+		OpenPrice                string `json:"o"`
+		ClosePrice               string `json:"c"`
+		HighPrice                string `json:"h"`
+		LowPrice                 string `json:"l"`
+		BaseAssetVolume          string `json:"v"`
+		NumberOfTrades           int    `json:"n"`
+		IsClosed                 bool   `json:"x"`
+		QuoteAssetVolume         string `json:"q"`
+		TakerBuyBaseAssetVolume  string `json:"V"`
+		TakerBuyQuoteAssetVolume string `json:"Q"`
+	} `json:"k"`
 }
 
 // Ticker represents 24 hour price change statistics
@@ -116,65 +170,7 @@ type Ticker struct {
 	TradeCount         int     `json:"count"`
 }
 
-// Price struct
-type Price struct {
-	Symbol string  `json:"symbol"`
-	Price  float64 `json:"price,string"`
-}
-
-// OrderBookTicker represents best price/qty for a symbol
-type OrderBookTicker struct {
-	Symbol   string  `json:"symbol"`
-	BidPrice float64 `json:"bidPrice,string"`
-	BidQty   float64 `json:"bidQty,string"`
-	AskPrice float64 `json:"askPrice,string"`
-	AskQty   float64 `json:"askQty,string"`
-}
-
-// TODO
-
-// TradeEvent represents trade change event
-type TradeEvent struct {
-	EventType     string      `json:"e"`
-	EventTime     uint64      `json:"E"`
-	Symbol        string      `json:"s"`
-	TradeID       uint64      `json:"t"`
-	Price         string      `json:"p"`
-	Quantity      string      `json:"q"`
-	BuyerOrderID  uint64      `json:"b"`
-	SellerOrderID uint64      `json:"a"`
-	TradeTime     uint64      `json:"T"`
-	IsMarketMaker bool        `json:"m"`
-	Ignore        interface{} `json:"M"`
-}
-
-// KindleCandlestick represents updates to the current klines/candlestick
-type KindleCandlestick struct {
-	EventType string `json:"e"`
-	EventTime uint64 `json:"E"`
-	Symbol    string `json:"s"`
-	Kline     struct {
-		KlineStart               uint64 `json:"t"`
-		KlineClose               uint64 `json:"T"`
-		Symbol                   string `json:"s"`
-		Interval                 string `json:"i"`
-		FirstTradeID             uint64 `json:"f"`
-		LastTradeID              uint64 `json:"L"`
-		OpenPrice                string `json:"o"`
-		ClosePrice               string `json:"c"`
-		HighPrice                string `json:"h"`
-		LowPrice                 string `json:"l"`
-		BaseAssetVolume          string `json:"v"`
-		NumberOfTrades           int    `json:"n"`
-		IsClosed                 bool   `json:"x"`
-		QuoteAssetVolume         string `json:"q"`
-		TakerBuyBaseAssetVolume  string `json:"V"`
-		TakerBuyQuoteAssetVolume string `json:"Q"`
-		Ignire                   string `json:"B"`
-	} `json:"k"`
-}
-
-// TickerEvent represents ticker stream update
+// TickerEvent represents ticker change event
 type TickerEvent struct {
 	EventType                string `json:"e"`
 	EventTime                uint64 `json:"E"`
@@ -201,20 +197,28 @@ type TickerEvent struct {
 	TotalTrades              int    `json:"n"`
 }
 
-// PartialBook represents top <levels> bids and asks, pushed every second. Valid <levels> are 5, 10, or 20.
-type PartialBook struct {
-	LastUpdateID uint64          `json:"lastUpdateId"`
-	Bids         [][]interface{} `json:"bids"`
-	Asks         [][]interface{} `json:"asks"`
+// Price struct
+type Price struct {
+	Symbol string  `json:"symbol"`
+	Price  float64 `json:"price,string"`
+}
+
+// OrderBookTicker represents best price/qty for a symbol
+type OrderBookTicker struct {
+	Symbol   string  `json:"symbol"`
+	BidPrice float64 `json:"bidPrice,string"`
+	BidQty   float64 `json:"bidQty,string"`
+	AskPrice float64 `json:"askPrice,string"`
+	AskQty   float64 `json:"askQty,string"`
 }
 
 // DiffDepth represents order book price and quantity depth updates used to locally manage an order book
 type DiffDepth struct {
-	EventType     string          `json:"e"`
-	EventTime     uint64          `json:"E"`
-	Symbol        string          `json:"s"`
-	FirstUpdateID uint64          `json:"U"`
-	FinalUpdateID uint64          `json:"u"`
-	Bids          [][]interface{} `json:"b"`
-	Asks          [][]interface{} `json:"a"`
+	EventType     string
+	EventTime     uint64
+	Symbol        string
+	FirstUpdateID uint64
+	FinalUpdateID uint64
+	Bids          []Order
+	Asks          []Order
 }

@@ -40,7 +40,12 @@ func GetOrderBook(symbol, limit string) (*OrderBook, error) {
 	if err := fetch(addrOrderBook, p, r); err != nil {
 		return nil, err
 	}
-	return parseOrderBook(r)
+	b, err := parseOrderBook(r)
+	if err != nil {
+		return nil, err
+	}
+	b.Symbol = symbol
+	return b, nil
 }
 
 // GetRecentTrades gets up to 500 trades

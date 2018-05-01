@@ -4,21 +4,21 @@ import "time"
 
 // RateLimit struct
 type RateLimit struct {
-	RateLimitType string `json:"rateLimitType"`
-	Interval      string `json:"interval"`
-	Limit         int    `json:"limit"`
+	RateLimitType RateLimiterType   `json:"rateLimitType"`
+	Interval      RateLimitInterval `json:"interval"`
+	Limit         int               `json:"limit"`
 }
 
 // SymbolFilter struct
 type SymbolFilter struct {
-	FilterType  string  `json:"filterType"`
-	MinNotional float64 `json:"minNotional,string,omitempty"`
-	MinPrice    float64 `json:"minPrice,string,omitempty"`
-	MaxPrice    float64 `json:"maxPrice,string,omitempty"`
-	TickSize    float64 `json:"tickSize,string,omitempty"`
-	MinQty      float64 `json:"minQty,string,omitempty"`
-	MaxQty      float64 `json:"maxQty,string,omitempty"`
-	StepSize    float64 `json:"stepSize,string,omitempty"`
+	FilterType  SymbolFilterType `json:"filterType"`
+	MinNotional float64          `json:"minNotional,string,omitempty"`
+	MinPrice    float64          `json:"minPrice,string,omitempty"`
+	MaxPrice    float64          `json:"maxPrice,string,omitempty"`
+	TickSize    float64          `json:"tickSize,string,omitempty"`
+	MinQty      float64          `json:"minQty,string,omitempty"`
+	MaxQty      float64          `json:"maxQty,string,omitempty"`
+	StepSize    float64          `json:"stepSize,string,omitempty"`
 }
 
 // Symbol struct
@@ -29,7 +29,7 @@ type Symbol struct {
 	BaseAssetPrecision int            `json:"baseAssetPrecision"`
 	QuoteAsset         string         `json:"quoteAsset"`
 	QuotePrecision     int            `json:"quotePrecision"`
-	OrderTypes         []string       `json:"orderTypes"`
+	OrderTypes         []OrderType    `json:"orderTypes"`
 	IcebergAllowed     bool           `json:"icebergAllowed"`
 	Filters            []SymbolFilter `json:"filters"`
 }
@@ -51,6 +51,7 @@ type Order struct {
 
 // OrderBook represents all orders for given Symbol
 type OrderBook struct {
+	Symbol       string
 	LastUpdateID uint64
 	Bids         []Order
 	Asks         []Order

@@ -1,7 +1,6 @@
 package binance
 
 import (
-	"fmt"
 	"net/url"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +16,5 @@ func connectWebsocket(path string) (*websocket.Conn, error) {
 		Path:   "ws/" + path,
 	}
 	socket, _, err := websocket.DefaultDialer.Dial(socketURL.String(), nil)
-	fmt.Println("WS open:", socketURL.String())
 	return socket, err
 }

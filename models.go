@@ -173,29 +173,29 @@ type Ticker struct {
 
 // TickerEvent represents ticker change event
 type TickerEvent struct {
-	EventType                string `json:"e"`
-	EventTime                uint64 `json:"E"`
-	Symbol                   string `json:"s"`
-	PriceChange              string `json:"p"`
-	PriceChangePercent       string `json:"P"`
-	WeightedAvgPrice         string `json:"w"`
-	PrevDayClosePrice        string `json:"x"`
-	CurrDayClosePrice        string `json:"c"`
-	CLoseTradeQuantity       string `json:"Q"`
-	BestBidPrice             string `json:"b"`
-	BidQuantity              string `json:"B"`
-	BestAskPrice             string `json:"a"`
-	BestAskQuantity          string `json:"A"`
-	OpenPrice                string `json:"o"`
-	ClosePrice               string `json:"h"`
-	LowPrice                 string `json:"l"`
-	TotalTradedBaseAssetVol  string `json:"v"`
-	TotalTradedQuoteAssetVol string `json:"q"`
-	StatOpenTime             uint64 `json:"O"`
-	StatCloseTime            uint64 `json:"C"`
-	FirstTradeID             uint64 `json:"F"`
-	LastTradeID              uint64 `json:"L"`
-	TotalTrades              int    `json:"n"`
+	EventType                string  `json:"e"`
+	EventTime                uint64  `json:"E"`
+	Symbol                   string  `json:"s"`
+	PriceChange              float64 `json:"p,string"`
+	PriceChangePercent       float64 `json:"P,string"`
+	WeightedAvgPrice         float64 `json:"w,string"`
+	PrevDayClosePrice        float64 `json:"x,string"`
+	CurrDayClosePrice        float64 `json:"c,string"`
+	CLoseTradeQuantity       float64 `json:"Q,string"`
+	BestBidPrice             float64 `json:"b,string"`
+	BidQuantity              float64 `json:"B,string"`
+	BestAskPrice             float64 `json:"a,string"`
+	BestAskQuantity          float64 `json:"A,string"`
+	OpenPrice                float64 `json:"o,string"`
+	ClosePrice               float64 `json:"h,string"`
+	LowPrice                 float64 `json:"l,string"`
+	TotalTradedBaseAssetVol  float64 `json:"v,string"`
+	TotalTradedQuoteAssetVol float64 `json:"q,string"`
+	StatOpenTime             uint64  `json:"O"`
+	StatCloseTime            uint64  `json:"C"`
+	FirstTradeID             uint64  `json:"F"`
+	LastTradeID              uint64  `json:"L"`
+	TotalTrades              int     `json:"n"`
 }
 
 // Price struct

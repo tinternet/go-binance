@@ -19,7 +19,7 @@ func GetServerTime() (t *time.Time, err error) {
 	if err := fetch(addrServerTime, nil, &reply); err != nil {
 		return nil, err
 	}
-	tval := time.Unix(reply.ServerTime, 0)
+	tval := time.Unix(0, reply.ServerTime*int64(time.Millisecond))
 	return &tval, nil
 }
 
